@@ -85,5 +85,6 @@ int main(int argc, char** argv) {
         }
 		close(client_socket[i]);
 	}
+    free(client_socket);
     return OK;
 }

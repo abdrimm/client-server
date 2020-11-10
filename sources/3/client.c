@@ -7,7 +7,6 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <string.h>
 
 enum errors {
     OK,
@@ -16,28 +15,44 @@ enum errors {
     ERR_CONNECT
 };
 
+char *get_word(int *size) {
+    char *answ = NULL;
+    char c = getchar();
+    int cnt = 0;
+    while (c != '\n' && c != ' ') {
+        cnt++;
+        answ = realloc(answ, (cnt + 1) * sizeof(char));
+        answ[cnt - 1] = c;
+        c = getchar();
+    }
+    answ[cnt] = '\0';
+    *size = cnt + 1;
+    return answ;
+}
+
 int init_socket(const char *ip, int port) {
-    //open socket, result is socket descriptor
+    // open socket, result is socket descriptor
     int server_socket = socket(PF_INET, SOCK_STREAM, 0);
     if (server_socket < 0) {
-        perror("Fail! Open socket");
+        perror("Fail: open socket");
         _exit(ERR_SOCKET);
     }
 
-    //prepare server address
+    // prepare server address
     struct hostent *host = gethostbyname(ip);
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(port);
-    memcpy(&server_address.sin_addr, host -> h_addr_list[0], sizeof(server_address));
+    memcpy(&server_address.sin_addr,
+        host -> h_addr_list[0], sizeof(server_address));
 
-    //connection
+    // connection
     struct sockaddr_in sin;
     sin.sin_family = AF_INET;
     sin.sin_port = htons(port);
     memcpy(&sin.sin_addr, host->h_addr_list[0], sizeof(sin.sin_addr));
     if (connect(server_socket, (struct sockaddr*) &sin, sizeof(sin)) < 0) {
-        perror("Connect failed!");
+        perror("Fail: connect");
         _exit(ERR_CONNECT);
     }
     return server_socket;
@@ -45,7 +60,7 @@ int init_socket(const char *ip, int port) {
 
 int main(int argc, char **argv) {
     if (argc != 3) {
-        puts("Incorrect args");
+        puts("Incorrect args.");
         puts("./client <ip> <port>");
         puts("Example:");
         puts("./client 127.0.0.1 5000");
@@ -54,18 +69,14 @@ int main(int argc, char **argv) {
     char *ip = argv[1];
     int port = atoi(argv[2]);
     int server = init_socket(ip, port);
-    char data[100] = {0};
-    int n = 0;
-    for (int i = 0; i < 100; i++) {
-        scanf("%c", &data[i]);
-        if (data[i] == '\n') {
-            break;
-        }
-        n++;
+    char *word;
+    int size_w;
+    for (word = get_word(&size_w); 
+        strcmp(word, "exit") && strcmp(word, "quit");
+        word = get_word(&size_w)) {
+            write(server, word, size_w);
+            free(word);
     }
-    for (int i = 0; i < n; i++) {
-         write(server, &data[i], 1);
-    }
-    close(server);   
+    close(server);
     return OK;
 }

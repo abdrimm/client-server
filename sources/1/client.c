@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <string.h>
+
 enum errors {
     OK,
     ERR_INCORRECT_ARGS,
@@ -23,7 +24,7 @@ int init_socket(const char *ip, int port) {
         _exit(ERR_SOCKET);
     }
 
-    //prepare server server_address
+    //prepare server address
     struct hostent *host = gethostbyname(ip);
     struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
@@ -55,15 +56,15 @@ int main(int argc, char **argv) {
     int server = init_socket(ip, port);
     char data[100] = {0};
     int n = 0;
-    for (int j = 0; j < 100; j++) {
-        scanf("%c", &data[j]);
-        if(data[j] == '\n') {
+    for(int i = 0; i < 100; i++) {
+        scanf("%c", &data[i]);
+        if(data[i]=='\n') {
             break;
         }
         n++;
     }
-    for(int j = 0; j < n + 1; j++) {
-         write(server, &data[j], 1);
+    for(int i = 0; i < n + 1; i++) {
+         write(server, &data[i], 1);
     }
     close(server);   
     return OK;
