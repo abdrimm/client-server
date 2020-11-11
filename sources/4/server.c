@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
                     word[j - 1] = ch;
                     read(client_socket[i], &ch, 1);
                 }
-                printf("%d: ", i + 1);
+                printf("client %d: ", i + 1);
                 puts(word);
                 for (int k = 0; k < clients; k++) {
                     if (k != i) {

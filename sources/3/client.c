@@ -69,13 +69,13 @@ int main(int argc, char **argv) {
     char *ip = argv[1];
     int port = atoi(argv[2]);
     int server = init_socket(ip, port);
-    char *word;
-    int size_w;
-    for (word = get_word(&size_w); 
-        strcmp(word, "exit") && strcmp(word, "quit");
-        word = get_word(&size_w)) {
-            write(server, word, size_w);
-            free(word);
+
+    char ch;
+    while (read(0, &ch, 1) >= 0) {
+        if (write(server, &(ch), 1) < 0) {
+            perror("write");
+            return 1;
+        }
     }
     close(server);
     return OK;

@@ -63,43 +63,39 @@ int main(int argc, char** argv) {
         puts("./server 5000 2");
         return ERR_INCORRECT_ARGS;
     }
-    int clients = atoi(argv[2]);
     int port = atoi(argv[1]);
     int server_socket = init_socket(port);
+    int clients = atoi(argv[2]);
     puts("Wait for connection");
     struct sockaddr_in client_address;
     socklen_t size;
-    int *client_socket = malloc(clients * sizeof(int));
+    int* client_socket = malloc(clients * sizeof(int));
     for (int i = 0; i < clients; i++) {
-        client_socket[i] = accept(server_socket,
-                                (struct sockaddr *) &client_address,
-                                &size);
-    }
-    pid_t *pid = malloc(clients * sizeof(pid_t));
-    for (int i = 0; i < clients; i++) {
-        pid[i] = fork();
-        if (pid[i] == 0) {
-            char *word = NULL;
-            do {
-                free(word);
-                word = NULL;
-                char ch;
-                read(client_socket[i], &ch, 1);
-                for (int j = 1; ch != 0; j++) {
-                    word = realloc(word, sizeof(char) * j);
-                    word[j - 1] = ch;
-                    read(client_socket[i], &ch, 1);
+        if (fork() == 0) {
+            client_socket[i] = accept(server_socket, 
+                                       (struct sockaddr *) &client_address,
+                                       &size);
+            char word[100] = {0};
+            int j = 0;
+            while (read(client_socket[i], &(word[j]), 1) > 0) {
+                if (word[j] == '\n' || word[j] == ' ') {
+                    word[j] = 0;
+                    printf("client %d: %s\n", i + 1, word);
+                    for (int k = 0; k < j + 1; k++) {
+                        word[k] = 0;
+                    }
+                    j = -1;
                 }
-                printf("%d: ", i + 1);
-                puts(word);
-            } while (strcmp(word, "exit") && strcmp(word, "quit"));
-            _exit(1);
-        }
-    }
+                j++; 
+            }
+            return 1;
+        } 
+    } 
     for (int i = 0; i < clients; i++) {
-        waitpid(pid[i], 0, 0);
+        wait(NULL);
         close(client_socket[i]);
     }
     free(client_socket);
+
     return OK;
 }
