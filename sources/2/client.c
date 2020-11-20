@@ -54,17 +54,12 @@ int main(int argc, char **argv) {
     char *ip = argv[1];
     int port = atoi(argv[2]);
     int server = init_socket(ip, port);
-    char data[100] = {0};
-    int n = 0;
-    for (int i = 0; i < 100; i++) {
-        scanf("%c", &data[i]);
-        if (data[i] == '\n') {
-            break;
+    char data;
+    for (;;) {
+        data = getchar();
+        if(data != '\n') {
+             write(server, &data, 1);
         }
-        n++;
-    }
-    for (int i = 0; i < n; i++) {
-         write(server, &data[i], 1);
     }
     close(server);   
     return OK;
