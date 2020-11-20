@@ -58,7 +58,6 @@ int main(int argc, char** argv) {
         puts("./server 5000 1");
         return ERR_INCORRECT_ARGS;
     }
-    int n = 1;
     int port = atoi(argv[1]);
     int clients = atoi(argv[2]);
     int *client_socket = malloc(clients * sizeof(int));
@@ -66,27 +65,22 @@ int main(int argc, char** argv) {
     puts("Wait for connection");
     struct sockaddr_in client_address;
     socklen_t size;
-    char data[10] = {0};
+    char data;
     for (int i = 0; i < clients; i++) {
         client_socket[i] = accept(server_socket, 
                                (struct sockaddr *) &client_address,
                                &size);
     }
     while(1) {
-        while(data[n - 1] != '\n') {
-            for(int i = 0; i < clients; i++) {
-                read(client_socket[i], &data[n], 1);
-                if(data[n] == '\n')
-                    break;
-                printf("client %d: %c\n", i + 1, data[n]);
-                n++;
-            }
-
-        }
         for(int i = 0; i < clients; i++) {
-            close(client_socket[i]);
+            int ret = read(client_socket[i], &data, 1);
+            if(ret <= 0)
+                break;
+            printf("client %d: %c\n", i + 1, data);
         }
-        break;
+    }
+    for(int i = 0; i < clients; i++) {
+        close(client_socket[i]);
     }
     free(client_socket);
     return OK;
