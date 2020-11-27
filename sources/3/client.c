@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 
     char ch;
     while (read(0, &ch, 1) >= 0) {
-        if (write(server, &(ch), 1) < 0) {
+        if (write(server, &ch, 1) < 0) {
             perror("write");
             return 1;
         }
