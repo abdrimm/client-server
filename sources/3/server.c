@@ -75,8 +75,9 @@ int main(int argc, char** argv) {
             client_socket[i] = accept(server_socket, 
                                        (struct sockaddr *) &client_address,
                                        &size);
-            char word[100] = {0};
+            char *word;
             int j = 0;
+            word = malloc((j+1)*sizeof(char));
             while (read(client_socket[i], &(word[j]), 1) > 0) {
                 if (word[j] == '\n' || word[j] == ' ') {
                     word[j] = 0;
@@ -87,6 +88,7 @@ int main(int argc, char** argv) {
                     j = -1;
                 }
                 j++; 
+                word = realloc(word, j+1);
             }
             return 1;
         } 
