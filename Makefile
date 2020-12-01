@@ -4,9 +4,11 @@ all:
 	gcc sources/2/server.c -o sources/2/server -Wall -Werror
 	gcc sources/2/client.c -o sources/2/client -Wall -Werror 
 	gcc sources/3/server.c -o sources/3/server -Wall -Werror
-	gcc sources/3/client.c -o sources/3/client -Wall -Werror 
+	gcc sources/3/client.c -o sources/3/client -Wall -Werror
 	gcc sources/4/server.c -o sources/4/server -Wall -Werror
-	gcc sources/4/client.c -o sources/4/client -Wall -Werror 
+	gcc sources/4/client.c -o sources/4/client -Wall -Werror
+	gcc sources/5/server.c -o sources/5/server -Wall -Werror
+	gcc sources/5/client.c -o sources/5/client -Wall -Werror
 
 clean:
 	rm sources/1/server
@@ -17,3 +19,5 @@ clean:
 	rm sources/3/client
 	rm sources/4/server
 	rm sources/4/client
+	rm sources/5/server
+	rm sources/5/client
