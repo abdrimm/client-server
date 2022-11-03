@@ -1,22 +1,22 @@
 # client-server
 Simple low-level client-server connection.
 
-* Download repository:
+Download repository
 ```bash
 git clone https://github.com/abdrimm/client-server
 ```
-*Compile
+Compile
 ```bash
 make
 ```
 
-*Run server
+Run server
 Argument: port
 ```bash
 bin/server 500
 ```
 
-*Run client
+Run client
 Argument: ip and port
 ```bash
 bin/client 127.0.0.1 5000
